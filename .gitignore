@@ -1,0 +1,12 @@
+data/
+*.zip
+checkpoints/
+*.pt
+*.pth
+*.onnx
+logs/
+samples/
+__pycache__/
+*.pyc
+.vscode/
+.idea/

@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  agri-api:
+    build: .
+    container_name: agri_dl_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./checkpoints:/app/checkpoints   # mount trained model weights
+      - ./configs:/app/configs
+      - ./data/class_names.json:/app/data/class_names.json
+    environment:
+      - CONFIG_PATH=configs/config.yaml
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]    # remove these 4 lines if no GPU in container
