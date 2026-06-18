@@ -32,12 +32,18 @@ agri_dl_project/
 │   ├── ensemble.py            ← ensemble weight optimisation
 │   ├── calibration.py         ← ECE + reliability diagrams
 │   └── deployment_analysis.py ← distribution shift + energy footprint
+├── report/                    ← full LaTeX report + compiled PDF (see report_FINAL.pdf)
 ├── run_all.py                 ← master pipeline script
 ├── setup_data.py              ← one-time dataset setup
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
 ```
+
+> **Note:** `data/`, `checkpoints/`, `logs/`, and `samples/` are intentionally excluded
+> from this repository via `.gitignore` (the full dataset is ~2.5GB and checkpoints/logs
+> are regenerable build artifacts, not source). See Section 2 and Section 6 below for how
+> to regenerate them locally.
 
 ---
 
@@ -58,6 +64,8 @@ pip install -r requirements.txt
 
 ## 2. Download Dataset
 
+This repo does **not** include the dataset. Download it yourself before running anything:
+
 ### Option A — Kaggle CLI (recommended)
 ```bash
 pip install kaggle
@@ -77,6 +85,8 @@ git clone https://github.com/spMohanty/PlantVillage-Dataset data/plantvillage_ra
 ```bash
 python setup_data.py --train_dir data/plantvillage/train
 ```
+
+This creates the local `data/` folder, which stays untracked by git.
 
 ---
 
@@ -192,13 +202,20 @@ curl -X POST http://localhost:8000/predict/all \
 
 ---
 
-## 6. Outputs
+## 6. Outputs (Not Tracked in Git)
 
-| Location | Contents |
-|---|---|
-| `checkpoints/` | Best model weights (.pt) and ONNX exports |
-| `logs/` | Training curves, confusion matrices, Grad-CAMs, attention maps, reliability diagrams, benchmark CSV |
-| `samples/` | GAN/DDPM generated image grids |
+Running the scripts above regenerates these locally. They are excluded from version
+control via `.gitignore` since they're large binary build artifacts, not source code:
+
+| Location | Contents | How to regenerate |
+|---|---|---|
+| `data/` | PlantVillage dataset (~2.5GB) | Section 2 above |
+| `checkpoints/` | Best model weights (`.pt`) and ONNX exports | Run any `task_*.train` / `export_onnx` command |
+| `logs/` | Training curves, confusion matrices, Grad-CAMs, attention maps, reliability diagrams, benchmark CSV | Generated automatically during training/evaluation |
+| `samples/` | GAN/DDPM generated image grids | Generated automatically during `task_b` training |
+
+If you clone this repo fresh, none of the above will exist until you run the
+corresponding scripts yourself.
 
 ---
 
@@ -214,12 +231,21 @@ Expected training times:
 
 ---
 
-## 8. LLM Tool Disclosure (Academic Integrity)
+## 8. Report
+
+The full written report (LaTeX source + compiled PDF) covering all four tasks,
+experimental results, ablations, and critical analysis is in [`report/`](report/).
+See `report/report_FINAL.pdf` for the final compiled version.
+
+---
+
+## 9. LLM Tool Disclosure (Academic Integrity)
 
 As required by the spec, this project used AI coding assistance (Claude) for:
 - Boilerplate code structure and file organisation
 - Standard PyTorch training loop templates
 - FastAPI endpoint scaffolding
+- LaTeX report formatting
 
 All architectural decisions, hyperparameter choices, experimental design,
 analysis, and written report sections are the students' own work.
@@ -227,4 +253,4 @@ analysis, and written report sections are the students' own work.
 ---
 
 *CS4152 Deep Learning & Neural Networks — Spring 2026*
-*Group: [Your names] | Submitted: Week 14*
+*Jahanzaeb Rana (F2023266496), Danish Farooq (F2023266462)*
